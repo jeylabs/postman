@@ -11,7 +11,7 @@ class PostmanServiceProvider extends ServiceProvider
     {
         $source = __DIR__ . '/config/postman.php';
         $this->publishes([$source => config_path('postman.php')]);
-        $this->mergeConfigFrom($source, 'Postman');
+        $this->mergeConfigFrom($source, 'postman');
     }
 
     public function register()
@@ -21,7 +21,7 @@ class PostmanServiceProvider extends ServiceProvider
 
     protected function registerBindings(Application $app)
     {
-        $app->singleton('Postman', function ($app) {
+        $app->singleton('postman', function ($app) {
             $config = $app['config'];
             return new Postman(
                 $config->get('postman.access_token', null),
@@ -29,7 +29,7 @@ class PostmanServiceProvider extends ServiceProvider
                 $config->get('postman.async_requests', false)
             );
         });
-        $app->alias('Postman', Postman::class);
+        $app->alias('postman', Postman::class);
 
     }
 }
