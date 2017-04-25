@@ -12,6 +12,7 @@ class Postman
     const GET_GROUP_LIST_API = 'api/campaign-subscriber/group/{campaignSubscriber}/lists';
     const POST_GROUP_LIST_API = 'api/campaign-subscriber/group/';
     const GET_GROUP_FROM_NAME_API = 'api/campaign-subscriber/group/name';
+    const GET_GROUP_FROM_ID_API = 'api/campaign-subscriber/group/from-id';
     const DEFAULT_TIMEOUT = 5;
     protected $client;
     protected $access_token;
@@ -108,6 +109,12 @@ class Postman
         $this->setHeaders(['Content-type' => 'application/json']);
         return $this->makeRequest('GET', self::GET_GROUP_FROM_NAME_API, $query, $formParameters);
     }
+
+    public function getGroupFromId($id) {
+        $this->setHeaders(['Content-type' => 'application/json']);
+        return $this->makeRequest('POST', self::GET_GROUP_FROM_ID_API, ['id' => $id], []);
+    }
+
     public function __destruct()
     {
         Promise\unwrap($this->promises);
