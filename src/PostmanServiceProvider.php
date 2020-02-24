@@ -24,12 +24,11 @@ class PostmanServiceProvider extends ServiceProvider
         $app->singleton('postman', function ($app) {
             $config = $app['config'];
             return new Postman(
-                $config->get('postman.access_token', null),
+                urldecode($config->get('postman.access_token', null)),
                 $config->get('postman.postman_api_base_uri', null),
                 $config->get('postman.async_requests', false)
             );
         });
         $app->alias('postman', Postman::class);
-
     }
 }

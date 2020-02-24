@@ -1,9 +1,12 @@
 <?php
+
 namespace Jeylabs\Postman;
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\RequestOptions as GuzzleRequestOptions;
+
 class Postman
 {
     const VERSION = '1.0.0';
@@ -72,7 +75,12 @@ class Postman
         if ($this->isAsyncRequest) {
             return $this->promises[] = $this->client->requestAsync($method, $uri, $options);
         }
-        $this->lastResponse = $this->client->request($method, $uri, $options);
+        try {
+            $this->lastResponse = $this->client->request($method, $uri, $options);
+        } catch (\Exception $e) {
+            logger($options);
+            throw $e;
+        }
         return json_decode($this->lastResponse->getBody(), true);
     }
     protected function getDefaultHeaders()
@@ -81,7 +89,8 @@ class Postman
             'Authorization' => 'Bearer ' . $this->access_token,
         ], $this->headers);
     }
-    protected function getDefaultFormParameter() {
+    protected function getDefaultFormParameter()
+    {
 
         return array_merge([
             'Authorization' => 'Bearer ' . $this->access_token,
@@ -92,25 +101,30 @@ class Postman
         $this->setHeaders(['Content-type' => 'application/json']);
         return $this->makeRequest('GET', self::GET_LIST_API, $query);
     }
-    public function getListsFromGroup($query = []) {
+    public function getListsFromGroup($query = [])
+    {
         $this->setHeaders(['Content-type' => 'application/json']);
         return $this->makeRequest('GET', self::GET_GROUP_LIST_API, $query);
     }
-    public function getGroup($query = []) {
+    public function getGroup($query = [])
+    {
         $this->setHeaders(['Content-type' => 'application/json']);
         return $this->makeRequest('GET', self::GET_GROUP_API, $query);
     }
-    public function subscribeListToGroup($query = [], $formParameters = [], $group = null) {
+    public function subscribeListToGroup($query = [], $formParameters = [], $group = null)
+    {
         $this->setHeaders(['Content-type' => 'application/json']);
         $uri = self::POST_GROUP_LIST_API . $group . '/subscribe';
         return $this->makeRequest('POST', $uri, $query, $formParameters);
     }
-    public function getGroupFromName($query = [], $formParameters = []) {
+    public function getGroupFromName($query = [], $formParameters = [])
+    {
         $this->setHeaders(['Content-type' => 'application/json']);
         return $this->makeRequest('GET', self::GET_GROUP_FROM_NAME_API, $query, $formParameters);
     }
 
-    public function getGroupFromId($id) {
+    public function getGroupFromId($id)
+    {
         $this->setHeaders(['Content-type' => 'application/json']);
         return $this->makeRequest('POST', self::GET_GROUP_FROM_ID_API, ['id' => $id], []);
     }
